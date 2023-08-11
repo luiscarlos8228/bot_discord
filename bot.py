@@ -3,7 +3,6 @@ from discord.ext import commands
 from discord.voice_client import VoiceClient
 from yt_dlp import YoutubeDL
 
-
 intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix='!', intents=intents)
@@ -12,7 +11,8 @@ commands_dict = {
     '!hello': 'Exibe uma saudação do bot.',
     '!ping': 'Responde com "Pong!" para testar a conexão.',
     '!play': 'Reproduz música do YouTube em um canal de voz.',
-    # Adicionar mais comandos conforme necessário
+    '!pause': 'Pausa a reprodução da música.',
+    '!resume': 'Retoma a reprodução da música.',
 }
 
 ydl_opts = {
@@ -68,6 +68,26 @@ async def play(ctx, *, query):
 
     except Exception as e:
         await ctx.send(f"Ocorreu um erro ao reproduzir a música: {e}")
+
+@bot.command()
+async def pause(ctx):
+    voice_client = ctx.voice_client
+
+    if voice_client.is_playing():
+        voice_client.pause()
+        await ctx.send("Música pausada.")
+    else:
+        await ctx.send("Não há música sendo reproduzida no momento.")
+
+@bot.command()
+async def resume(ctx):
+    voice_client = ctx.voice_client
+
+    if voice_client.is_paused():
+        voice_client.resume()
+        await ctx.send("Música retomada.")
+    else:
+        await ctx.send("A reprodução de música não está pausada.")
 
 @bot.command(name='comandos')
 async def bot_help(ctx):
